@@ -33,21 +33,11 @@ public class Processador {
      * @param usuarios Array com os N usuários monitorados
      */
     public static void imprimirUsuarios(Usuario[] usuarios) {
-        System.out.println("\n+========================================================+");
-        System.out.println("|      USUARIOS MONITORADOS — SMARTWATCH BPM             |");
-        System.out.println("+======+==========================+================+");
-        System.out.println("|  ID  | Nome                     | Genero Musical |");
-        System.out.println("+------+--------------------------+----------------+");
+        System.out.println("\nUsuarios Monitorados:");
 
-        // O(N): percorre cada usuário exatamente uma vez
         for (int i = 0; i < usuarios.length; i++) {
             System.out.println(usuarios[i].toString());
         }
-
-        System.out.println("+------+--------------------------+----------------+");
-        System.out.println("| Total de usuarios monitorados: " + usuarios.length
-                + "                         |");
-        System.out.println("+========================================================+");
     }
 
     // =========================================================================
@@ -71,23 +61,15 @@ public class Processador {
      */
     public static void imprimirLeiturasPorUsuario(Usuario[] usuarios,
                                                    LeituraBPM[][] leituras) {
-        System.out.println("\n+========================================================+");
-        System.out.println("|           LEITURAS DE BPM POR USUARIO                  |");
-        System.out.println("+========================================================+");
+        System.out.println("\nLeituras de BPM por Usuario:");
 
-        // Laço externo: O(N)
         for (int i = 0; i < usuarios.length; i++) {
-            System.out.println("\n  >> Usuario ID " + usuarios[i].getId()
-                    + " | " + usuarios[i].getNome()
-                    + " | Genero: " + usuarios[i].getGeneroMusical());
-            System.out.println("  +--------------------------+");
+            System.out.println("\n  Usuario " + usuarios[i].getId() + ": "
+                    + usuarios[i].getNome() + " (" + usuarios[i].getGeneroMusical() + ")");
 
-            // Laço interno: O(M) por usuário
             for (int j = 0; j < leituras[i].length; j++) {
-                System.out.println("  |" + leituras[i][j] + "  |");
+                System.out.println("    " + leituras[i][j]);
             }
-
-            System.out.println("  +--------------------------+");
         }
     }
 
@@ -176,29 +158,25 @@ public class Processador {
         int n = usuarios.length;
         int m = leituras[0].length;
 
-        // Matriz N×N que armazenará o MSE de cada par (i, j)
         double[][] mse = new double[n][n];
-
         double menorMSE  = Double.MAX_VALUE;
         int    parI      = 0;
         int    parJ      = 1;
 
-        // ── Cálculo: O(N² × M) ───────────────────────────────────────────
-        for (int i = 0; i < n; i++) {                      // laço 1: N iterações
-            for (int j = 0; j < n; j++) {                  // laço 2: N iterações
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
                 if (i == j) {
-                    mse[i][j] = 0.0;                       // diagonal: usuário vs si mesmo
+                    mse[i][j] = 0.0;
                     continue;
                 }
                 double somaQuadrados = 0.0;
-                for (int k = 0; k < m; k++) {              // laço 3: M iterações
+                for (int k = 0; k < m; k++) {
                     double diff = leituras[i][k].getValorBPM()
                                 - leituras[j][k].getValorBPM();
                     somaQuadrados += diff * diff;
                 }
                 mse[i][j] = somaQuadrados / m;
 
-                // Registra o par com menor MSE (maior similaridade)
                 if (i < j && mse[i][j] < menorMSE) {
                     menorMSE = mse[i][j];
                     parI     = i;
@@ -207,44 +185,35 @@ public class Processador {
             }
         }
 
-        // ── Impressão da matriz ──────────────────────────────────────────
-        System.out.println("\n+============================================================+");
-        System.out.println("|   MATRIZ DE SIMILARIDADE DE BPM (Erro Quadratico Medio)   |");
-        System.out.println("|   Valor MENOR = par MAIS SIMILAR   Complexidade: O(N2*M)   |");
-        System.out.println("+============================================================+");
-
-        // Cabeçalho das colunas
-        System.out.printf("%-6s", "");
+        System.out.println("\nMatriz de Similaridade (Erro Quadratico Medio):");
+        System.out.print("    ");
         for (int i = 0; i < n; i++) {
-            System.out.printf(" U%-7d", i + 1);
+            System.out.printf("  U%-5d", i + 1);
         }
         System.out.println();
 
-        // Linhas da matriz
         for (int i = 0; i < n; i++) {
-            System.out.printf("U%-5d", i + 1);
+            System.out.printf("U%-3d", i + 1);
             for (int j = 0; j < n; j++) {
                 if (i == j) {
-                    System.out.printf(" %-8s", "  ---  ");
+                    System.out.printf("    -   ");
                 } else {
-                    System.out.printf(" %-8.2f", mse[i][j]);
+                    System.out.printf("  %6.2f", mse[i][j]);
                 }
             }
             System.out.println();
         }
 
-        // ── Resultado: par mais similar ──────────────────────────────────
-        System.out.println("\n  >> Par com maior similaridade cardíaca:");
-        System.out.printf("     [U%d] %s  (Genero: %s)%n",
+        System.out.println("\nMaior Similaridade:");
+        System.out.printf("  [U%d] %s (%s)%n",
                 parI + 1,
                 usuarios[parI].getNome(),
                 usuarios[parI].getGeneroMusical());
-        System.out.printf("     [U%d] %s  (Genero: %s)%n",
+        System.out.printf("  [U%d] %s (%s)%n",
                 parJ + 1,
                 usuarios[parJ].getNome(),
                 usuarios[parJ].getGeneroMusical());
-        System.out.printf("     MSE = %.4f%n", menorMSE);
-        System.out.println("+============================================================+");
+        System.out.printf("  MSE = %.2f%n", menorMSE);
     }
 
     // =========================================================================
@@ -266,13 +235,8 @@ public class Processador {
      */
     public static void imprimirResumoEstatistico(Usuario[] usuarios,
                                                   LeituraBPM[][] leituras) {
-        System.out.println("\n+========================================================+");
-        System.out.println("|           RESUMO ESTATISTICO DE BPM POR USUARIO        |");
-        System.out.println("+------+------------------------+-----------+-----------+");
-        System.out.println("| ID   | Nome                   |  BPM Med  |  BPM Max  |");
-        System.out.println("+------+------------------------+-----------+-----------+");
+        System.out.println("\nResumo Estatistico de BPM por Usuario:");
 
-        // O(N * M): para cada usuário, percorre todas as M leituras
         for (int i = 0; i < usuarios.length; i++) {
             double soma   = 0.0;
             int    maxBPM = Integer.MIN_VALUE;
@@ -284,13 +248,11 @@ public class Processador {
             }
 
             double media = soma / leituras[i].length;
-            System.out.printf("| %-4d | %-22s |   %6.2f  |   %6d  |%n",
+            System.out.printf("  [%d] %-22s - Media: %6.2f BPM | Max: %6d BPM%n",
                     usuarios[i].getId(),
                     usuarios[i].getNome(),
                     media,
                     maxBPM);
         }
-
-        System.out.println("+------+------------------------+-----------+-----------+");
     }
 }

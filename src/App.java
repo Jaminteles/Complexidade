@@ -31,21 +31,15 @@ import leitor.LeituraBPM;
  * Entrega    : 29/04/2026
  */
 public class App {
-
     public static void main(String[] args) {
 
         // ── Parametros da simulacao ────────────────────────────────────────
         final int  NUM_USUARIOS         = 10;   // N: numero de usuarios
-        final int  LEITURAS_POR_USUARIO = 15;   // M: leituras por usuario
+        final int  LEITURAS_POR_USUARIO = 5;   // M: leituras por usuario
         final long SEED                 = 2026L; // semente para reproducibilidade
 
-        // ── Cabecalho do sistema ───────────────────────────────────────────
-        System.out.println("+========================================================+");
-        System.out.println("|   MONITORAMENTO DE BPM COM ESTIMULO MUSICAL            |");
-        System.out.println("|   Simulacao: N=" + NUM_USUARIOS
-                + " usuarios | M=" + LEITURAS_POR_USUARIO
-                + " leituras/usuario        |");
-        System.out.println("+========================================================+");
+        System.out.println("== MONITORAMENTO DE BPM COM ESTIMULO MUSICAL ");
+        System.out.println("Parametros: N=" + NUM_USUARIOS + " usuarios, M=" + LEITURAS_POR_USUARIO + " leituras/usuario");
 
         // ── Geracao pseudoaleatoria dos dados ─────────────────────────────
         // Complexidade: O(N) para usuarios + O(N*M) para leituras
@@ -53,37 +47,26 @@ public class App {
         Usuario[]    usuarios = gerador.gerarUsuarios(NUM_USUARIOS);
         LeituraBPM[][] leituras = gerador.gerarLeituras(usuarios, LEITURAS_POR_USUARIO);
 
-        System.out.println("\n[GERACAO] Dados gerados com semente=" + SEED
-                + " | Complexidade O(N*M)");
+        System.out.println("\nDados gerados (seed=" + SEED + ")");
 
-        // ── d.1: Listar usuarios monitorados — O(N) ───────────────────────
-        System.out.println("\n[d.1] LISTAGEM DOS USUARIOS MONITORADOS | Complexidade: O(N)");
+        System.out.println("\n-- d.1: Usuarios Monitorados (O(N))");
         Processador.imprimirUsuarios(usuarios);
 
-        // ── d.2: Listar leituras por usuario — O(N*M) ─────────────────────
-        System.out.println("\n[d.2] LEITURAS ORIGINAIS POR USUARIO | Complexidade: O(N*M)");
+        System.out.println("\n-- d.2: Leituras por Usuario (O(N*M))");
         Processador.imprimirLeiturasPorUsuario(usuarios, leituras);
 
-        // ── BONUS: Resumo estatistico — O(N*M) ────────────────────────────
-        System.out.println("\n[BONUS] RESUMO ESTATISTICO | Complexidade: O(N*M)");
+        System.out.println("\n-- Resumo Estatistico (O(N*M))");
         Processador.imprimirResumoEstatistico(usuarios, leituras);
 
-        // ── d.3: Ordenacao crescente por BPM (Bubble Sort) — O(N*M²) ─────
-        System.out.println("\n[d.3] ORDENANDO LEITURAS CRESCENTE (Bubble Sort)"
-                + " | Complexidade: O(N * M^2)");
+        System.out.println("\n-- d.3: Ordenacao de Leituras - Bubble Sort (O(N*M²))");
         Processador.ordenarLeiturasCrescente(leituras);
 
-        System.out.println("\n[d.3] LEITURAS APOS ORDENACAO CRESCENTE | Complexidade: O(N*M)");
+        System.out.println("\n-- Leituras Ordenadas (O(N*M))");
         Processador.imprimirLeiturasPorUsuario(usuarios, leituras);
 
-        // ── d.4: Matriz de similaridade de BPM — O(N²*M) ─────────────────
-        System.out.println("\n[d.4] MATRIZ DE SIMILARIDADE ENTRE PARES"
-                + " | Complexidade: O(N^2 * M)");
+        System.out.println("\n-- d.4: Matriz de Similaridade (O(N²*M))");
         Processador.analisarSimilaridadeEntrePares(usuarios, leituras);
 
-        // ── Rodape ─────────────────────────────────────────────────────────
-        System.out.println("\n+========================================================+");
-        System.out.println("|                  SIMULACAO CONCLUIDA                  |");
-        System.out.println("+========================================================+");
+        System.out.println("\n== Simulacao Concluida");
     }
 }
